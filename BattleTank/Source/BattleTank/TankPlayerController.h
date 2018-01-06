@@ -28,10 +28,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CrossHairYLocation = 0.33333f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LineTraceRange = 100000.0f;
+
 private:
 	//Start moving the barrel toward the crosshair UI in the world
 	void AimTowardsCrosshair();
 	bool GetSightRayHitLocation(FVector& OutHitLocation) const;
+	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
+	bool GetLookVectorHitLocation(FVector& OutHit, FVector LookDirection) const;
 	
 
 
