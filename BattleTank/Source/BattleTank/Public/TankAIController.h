@@ -19,5 +19,11 @@ private:
 	ATank* GetControlledTank() const;
 	virtual void BeginPlay() override;
 	ATank* GetPlayerTank() const;
+	virtual void Tick(float DeltaTime) override;
+	//Start moving the barrel toward the crosshair UI in the world
+	void AimTowardsPlayer();
+
+	ATank* ControlledTank = nullptr;
+	ATank* PlayerTank = nullptr;
 	
 };
