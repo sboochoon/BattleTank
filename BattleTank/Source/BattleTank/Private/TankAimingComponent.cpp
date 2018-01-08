@@ -2,6 +2,7 @@
 
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "TankBarrel.h"
 #include "Kismet/GameplayStaticsTypes.h"
 
 
@@ -16,7 +17,7 @@ UTankAimingComponent::UTankAimingComponent()
 }
 
 
-void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent * BarrelToSet)
+void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
 }
@@ -52,7 +53,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto RotationAmount = AimRotator - BarrelRotator;
 
 
-	//Move barrel the right amount this frame, given max elevation speed and frame time
+	Barrel->Elevate(5);
 
 }
 
