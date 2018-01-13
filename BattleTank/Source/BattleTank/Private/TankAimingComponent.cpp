@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankAimingComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/GameplayStaticsTypes.h"
 
 
@@ -22,6 +23,11 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 	Barrel = BarrelToSet;
 }
 
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
+}
+
 void UTankAimingComponent::OutputLog(FString TankName, FVector Location)
 {
 	auto BarrelLocation = Barrel->GetComponentLocation();
@@ -34,7 +40,7 @@ void UTankAimingComponent::AimAt(FVector AimLocation, float LaunchSpeed)
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("LaunchPoint"));
 
-	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVelocity, StartLocation, AimLocation, LaunchSpeed, ESuggestProjVelocityTraceOption::DoNotTrace);
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVelocity, StartLocation, AimLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
 
 	if (bHaveAimSolution)
 	{
@@ -53,7 +59,8 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto RotationAmount = AimRotator - BarrelRotator;
 
 
-	Barrel->Elevate(5);
+	Barrel->Elevate(RotationAmount.Pitch);
+	Turret->Rotate(RotationAmount.Yaw);
 
 }
 

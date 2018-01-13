@@ -9,6 +9,7 @@
 
 //Forward declaration
 class UTankBarrel;
+class UTankTurret;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
@@ -22,6 +23,9 @@ public:
 	//Setter method for Barrel
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
+	//Setter method for Turret
+	void SetTurretReference(UTankTurret* TurretToSet);
+
 	//Output log
 	void OutputLog(FString TankName, FVector Location);
 
@@ -30,6 +34,7 @@ public:
 
 private:
 	UTankBarrel* Barrel = nullptr;
+	UTankTurret* Turret = nullptr;
 	void MoveBarrelTowards(FVector AimDirection);
 	
 };
