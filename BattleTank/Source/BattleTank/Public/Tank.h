@@ -62,16 +62,16 @@ private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 ///Variables
-	//Speed of the projectile being fired
-	UPROPERTY(EditAnywhere, Category = Firing)
+	//Speed of the projectile being fired, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
 	float LaunchSpeed = 4000.0f; // 40 m/s
 
 	// Property to determine fire rate, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
 	float ReloadTimeInSeconds = 3.0f;
 
-	// Allows user to add an AProjectile actor in BP
-	UPROPERTY(EditAnywhere, Category = Setup)
+	// Allows user to add an AProjectile actor in BP, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
 	
 	// Var to store local reference of Barrel

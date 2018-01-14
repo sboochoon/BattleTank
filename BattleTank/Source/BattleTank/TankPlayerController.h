@@ -33,15 +33,15 @@ public:
 
 ///Variables
 	// X Location of the crosshair UI on the screen
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float CrossHairXLocation = 0.5f;
 
 	// Y Location of the crosshair UI on the screen
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float CrossHairYLocation = 0.33333f;
 
 	// Distance of the raycast for determining if we hit anything
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float LineTraceRange = 100000.0f;
 
 private:
