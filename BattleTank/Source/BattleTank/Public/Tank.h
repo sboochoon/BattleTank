@@ -6,9 +6,15 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h"
 
-class UTankBarrel; //Fwd Declaration
+///Forward Declarations
+class UTankBarrel;
 class UTankTurret;
 class UTankAimingComponent;
+class AProjectile;
+
+/**
+*
+*/
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -16,33 +22,61 @@ class BATTLETANK_API ATank : public APawn
 	GENERATED_BODY()
 
 public:
+///Functions
+/*Constructor*/
 	// Sets default values for this pawn's properties
 	ATank();
 
-	//Set the tank's barrel
+/*Setters*/
+	// Set the tank's barrel
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
-	//Set the tank's turret
+	// Set the tank's turret
 	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetTurretReference(UTankTurret* TurretToSet);
+	void SetTurretReference(UTankTurret* TurretToSet);
 
+/*Actions*/
+	// Fire function
+	UFUNCTION(BlueprintCallable, Category = Firing)
+	void Fire();										
+
+///TICK Functions
+	//TICK: TankPlayerController/Tick/AimTowardsCrosshair
 	// Aim at a FVector world location
 	virtual void AimAt(FVector AimLocation);
 
+///Variables
+
 protected:
+///Functions
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+///Variables
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:	
-
+///Functions
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+///Variables
 	//Speed of the projectile being fired
 	UPROPERTY(EditAnywhere, Category = Firing)
-	float LaunchSpeed = 100000.0f; // 1000 m/s
+	float LaunchSpeed = 4000.0f; // 40 m/s
 
+	// Property to determine fire rate, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	float ReloadTimeInSeconds = 3.0f;
+
+	// Allows user to add an AProjectile actor in BP
+	UPROPERTY(EditAnywhere, Category = Setup)
+	TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
+	
+	// Var to store local reference of Barrel
+	UTankBarrel* Barrel = nullptr; // Needed for getting the socket location and rotation for launching projectile
+
+	// Var to hold time since last fired (used to calculate reloading)
+	double LastFireTime = 0; // *double* because we're using FPlatformTime::Seconds()					
 };

@@ -9,24 +9,22 @@
 /**
  * 
  */
+
+ //BlueprintSpawnableComponent so we can add it as a static mesh component to our actor in BP, hide the Collision category in the Details panel
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent), hidecategories = ("Collision"))
 class BATTLETANK_API UTankTurret : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 
 public:
-	// -1 is max downward speed, +1 is max upward speed
+///Functions
+	// Rotate the turret clockwise or anticlockwise by RelativeSpeed
+	// -1 is max anticlockwise speed, +1 is max clockwise speed
 	void Rotate(float RelativeSpeed);
 
 private:
+///Variables
+	// Movement in degrees that the turret can rotate per second
 	UPROPERTY(EditAnywhere, Category = Setup)
-		float MaxDegreesPerSecond = 25.0f; //Sensible default
-
-	//UPROPERTY(EditAnywhere, Category = Setup)
-	//	float MaxElevation = 40.0f; //Sensible default
-
-	//UPROPERTY(EditAnywhere, Category = Setup)
-	//	float MinElevation = 0.0f; //Sensible default
-
-
+	float MaxDegreesPerSecond = 25.0f;
 };

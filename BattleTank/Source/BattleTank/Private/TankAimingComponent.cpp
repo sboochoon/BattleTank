@@ -6,8 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/GameplayStaticsTypes.h"
 
-
-// Sets default values for this component's properties
+/* UTankAimingComponent Constructor
+Sets default values for this component's properties
+*/
 UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -17,50 +18,59 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-
+/* SetBarrelReference
+Setter method for Barrel, called from BP via Tank.cpp
+*/
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
 }
 
+/* SetTurretReference
+Setter method for Turret, called from BP via Tank.cpp
+*/
 void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
 {
 	Turret = TurretToSet;
 }
 
-void UTankAimingComponent::OutputLog(FString TankName, FVector Location)
-{
-	auto BarrelLocation = Barrel->GetComponentLocation();
-	UE_LOG(LogTemp, Warning, TEXT("%s aiming at: %s From %s"), *TankName, *Location.ToString(), *BarrelLocation.ToString());
-}
-
+/* AimAt
+TICK: Called every tick via TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt
+Get the AimLocation and LaunchSpeed from Tank.cpp
+Calculate if we can fire at our crosshair worldspace location based on SuggestProjectileVelocity:
+If we can then send a unit direction vector based on our AimLocation to our MoveBarrelTowards function
+If we can not fire based on SuggestProjectileVelocity then it means that it is impossible for our projectile to reach the crosshair worldspace coords
+*/
 void UTankAimingComponent::AimAt(FVector AimLocation, float LaunchSpeed)
 {
-	if (!Barrel) { return; }
+	if (!Barrel || !Turret) { return; }
+
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("LaunchPoint"));
 
-	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVelocity, StartLocation, AimLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OUT OutLaunchVelocity, StartLocation, AimLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
 
 	if (bHaveAimSolution)
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
-		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at: %s with launch vector: %s"), *GetOwner()->GetName(), *AimDirection.ToString(), *OutLaunchVelocity.ToString());
 	}
 }
 
+/* MoveBarrelTowards
+TICK: Called every tick via TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt/TankAimingComponent/AimAt ONLY if we have a valid aiming solution
+Send the appropriate rotation values to the Turret and Barrel
+*/
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
 	//Find difference between current barrel rotation and AimDirection
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimRotator = AimDirection.Rotation();
-
 	auto RotationAmount = AimRotator - BarrelRotator;
 
-
+	//Tell the Barrel to Elevate by the specified Pitch
 	Barrel->Elevate(RotationAmount.Pitch);
+
+	//Tell the Turret to Rotate by the specified Yaw
 	Turret->Rotate(RotationAmount.Yaw);
-
 }
-

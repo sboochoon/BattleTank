@@ -5,58 +5,29 @@
 #include "Tank.h"
 #include "Engine/World.h"
 
+/* BeginPlay
+Called when the game starts or when spawned
+*/
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ControlledTank = GetControlledTank();
-	if (!ControlledTank)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AI not possessing a tank"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AI Controlled Tank ID: %s"), *ControlledTank->GetName());
-	}
-
-	PlayerTank = GetPlayerTank();
-	if (!PlayerTank)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AI did not find Player"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AI Found Player, ID: %s"), *PlayerTank->GetName());
-	}
-
 }
 
+/* Tick
+TICK: Called every tick via TankAIController
+*/
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	AimTowardsPlayer();
-}
 
-void ATankAIController::AimTowardsPlayer()
-{
+	//Get the player tank
+	auto PlayerTank = Cast<ATank>(AActor::GetWorld()->GetFirstPlayerController()->GetPawn());
+
+	//Get the AI tank
+	auto ControlledTank = Cast<ATank>(GetPawn());
+	
 	if (ControlledTank && PlayerTank)
 	{
 		ControlledTank->AimAt(PlayerTank->GetActorLocation());
 	}
 }
-
-
-ATank* ATankAIController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
-ATank* ATankAIController::GetPlayerTank() const
-{
-	auto PlayerPawn = Cast<ATank>(AActor::GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (!PlayerPawn) { return nullptr;}
-
-	return PlayerPawn;
-}
-
-

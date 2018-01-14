@@ -6,24 +6,32 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
+///Forward Declarations
 class ATank;
+
 /**
- * 
- */
+*
+*/
+
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 
 private:
-	ATank* GetControlledTank() const;
+///Functions
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	ATank* GetPlayerTank() const;
-	virtual void Tick(float DeltaTime) override;
-	//Start moving the barrel toward the crosshair UI in the world
-	void AimTowardsPlayer();
 
+///TICK Functions
+	//TICK: TankAIController
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+///Variables
+	// AI controlled tank
 	ATank* ControlledTank = nullptr;
+
+	// Player controlled tank
 	ATank* PlayerTank = nullptr;
-	
 };
