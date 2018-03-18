@@ -7,7 +7,6 @@ Sets a throttle between -1 and +1 and AddForceAtLocation to move the tank
 */
 void UTankTrack::SetThrottle(float Throttle)
 {
-	//TODO Clamp Throttle value to -1 and 1 so player cannot override the tank speed
 
 	//Calculate force to apply based on Throttle and the TrackMaxDrivingForce
 	auto ForceApplied = GetForwardVector() * Throttle * TrackMaxDrivingForce;

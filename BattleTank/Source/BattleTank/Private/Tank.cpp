@@ -5,6 +5,7 @@
 #include "Projectile.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
+#include "TankMovementComponent.h"
 
 /* ATank Constructor
 Sets default values

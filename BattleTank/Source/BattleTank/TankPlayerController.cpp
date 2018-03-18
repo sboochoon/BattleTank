@@ -14,18 +14,6 @@ Called when the game starts or when spawned
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//Get the tank that has been spawned into the world for us (at the PlayerStart location)
-	auto ControlledTank = GetControlledTank();
-	if (!ControlledTank)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController not possessing a tank"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Controlled Tank ID: %s"), *ControlledTank->GetName());
-	}
-	
 }
 
 /* Tick
