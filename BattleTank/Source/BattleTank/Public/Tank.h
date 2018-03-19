@@ -28,18 +28,9 @@ public:
 	// Sets default values for this pawn's properties
 	ATank();
 
-/*Setters*/
-	// Set the tank's barrel
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	// Set the tank's turret
-	UFUNCTION(BlueprintCallable, Category = Setup)
-	void SetTurretReference(UTankTurret* TurretToSet);
-
 /*Actions*/
 	// Fire function
-	UFUNCTION(BlueprintCallable, Category = Firing)
+	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void Fire();										
 
 ///TICK Functions
@@ -55,6 +46,7 @@ protected:
 	virtual void BeginPlay() override;
 
 ///Variables
+	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -67,15 +59,15 @@ private:
 
 ///Variables
 	//Speed of the projectile being fired, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float LaunchSpeed = 4000.0f; // 40 m/s
 
 	// Property to determine fire rate, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
-	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float ReloadTimeInSeconds = 3.0f;
 
 	// Allows user to add an AProjectile actor in BP, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
 	
 	// Var to store local reference of Barrel

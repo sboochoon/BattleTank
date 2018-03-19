@@ -11,21 +11,30 @@ class UTankTrack;
 /**
  * 
  */
+ //BlueprintSpawnableComponent so we can add it as a component to our actor in BP
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankMovementComponent : public UNavMovementComponent
 {
 	GENERATED_BODY()
 
+///Functions
 public:
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	//Setup the tracks
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void Initialize(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);
 
-	UFUNCTION(BlueprintCallable, Category = Input)
+	//Forward/backward movement
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void IntendMoveFoward(float Throw);
 
-	UFUNCTION(BlueprintCallable, Category = Input)
+	//Right/left turning
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void IntendTurnRight(float Turn);
-	
+
+	//Used for AI to navigate the navmesh
+	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
+
+///Variables
 private:
 	UTankTrack* LeftTrack = nullptr;
 	UTankTrack* RightTrack = nullptr;

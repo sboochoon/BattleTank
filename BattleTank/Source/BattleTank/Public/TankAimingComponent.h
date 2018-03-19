@@ -7,6 +7,15 @@
 #include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h"
 
+///ENUMS
+UENUM()
+enum class EFiringStatus : uint8
+{
+	Reloading,
+	Aiming,
+	Locked
+};
+
 ///Forward Declarations
 class UTankBarrel;
 class UTankTurret;
@@ -23,16 +32,14 @@ class BATTLETANK_API UTankAimingComponent : public UActorComponent
 
 public:	
 ///Functions
+
+	//Setup the aiming component
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
+
 /*Constructor*/
 	// Sets default values for this component's properties
 	UTankAimingComponent();
-
-/*Setters*/
-	//Setter method for Barrel, called from BP via Tank.cpp
-	void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	//Setter method for Turret, called from BP via Tank.cpp
-	void SetTurretReference(UTankTurret* TurretToSet);
 
 ///TICK Functions
 	//TICK: TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt
@@ -41,6 +48,11 @@ public:
 	//If we can then send a unit direction vector based on our AimLocation to our MoveBarrelTowards function.
 	//If we can not fire based on SuggestProjectileVelocity then it means that it is impossible for our projectile to reach the crosshair worldspace coords
 	void AimAt(FVector AimLocation, float LaunchSpeed);
+
+	//Enum for firing states
+	UPROPERTY(BlueprintReadOnly , Category = "Firing")
+	EFiringStatus FiringState = EFiringStatus::Reloading;
+
 
 private:
 ///TICK Functions
@@ -54,6 +66,4 @@ private:
 
 	// Turret for this tank that the aiming component is attached to
 	UTankTurret* Turret = nullptr;
-
-	
 };

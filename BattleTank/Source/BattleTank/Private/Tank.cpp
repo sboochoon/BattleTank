@@ -14,9 +14,6 @@ ATank::ATank()
 {
  	// We don't need the Tank to tick every frame
 	PrimaryActorTick.bCanEverTick = false;
-
-	//No need to protect pointers as added at construction
-	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming Component")); //CreateDefaultSubobject<Class>(FName("NAME")) adds a component of <Class> with NAME by default to the actor
 }
 
 /* BeginPlay
@@ -35,28 +32,12 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-/* SetBarrelReference
-Function that will be setup in BP so that TankAimingComponent knows what mesh the Barrel is
-*/
-void ATank::SetBarrelReference(UTankBarrel * BarrelToSet)
-{
-	TankAimingComponent->SetBarrelReference(BarrelToSet);
-	Barrel = BarrelToSet; //Local reference to be used in Fire()
-}
-
-/* SetTurretReference 
-Function that will be setup in BP so that TankAimingComponent knows what mesh the Turret is
-*/
-void ATank::SetTurretReference(UTankTurret * TurretToSet)
-{
-	TankAimingComponent->SetTurretReference(TurretToSet);
-}
-
 /* AimAt
 TICK: Called every tick via TankPlayerController/Tick/AimTowardsCrosshair
 */
 void ATank::AimAt(FVector AimLocation)
 {
+	if (!TankAimingComponent) { return; }
 	TankAimingComponent->AimAt(AimLocation, LaunchSpeed);
 }
 

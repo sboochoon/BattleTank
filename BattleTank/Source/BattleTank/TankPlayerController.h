@@ -29,6 +29,7 @@ public:
 	virtual void BeginPlay() override;
 
 	// Returns the <ATank>GetPawn() of PlayerController
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	ATank* GetControlledTank() const;
 
 ///Variables

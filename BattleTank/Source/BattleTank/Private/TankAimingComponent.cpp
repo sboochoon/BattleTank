@@ -18,19 +18,9 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-/* SetBarrelReference
-Setter method for Barrel, called from BP via Tank.cpp
-*/
-void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
+void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet)
 {
 	Barrel = BarrelToSet;
-}
-
-/* SetTurretReference
-Setter method for Turret, called from BP via Tank.cpp
-*/
-void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
-{
 	Turret = TurretToSet;
 }
 
@@ -63,6 +53,8 @@ Send the appropriate rotation values to the Turret and Barrel
 */
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
+	if (!Barrel || !Turret) { return; }
+
 	//Find difference between current barrel rotation and AimDirection
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimRotator = AimDirection.Rotation();

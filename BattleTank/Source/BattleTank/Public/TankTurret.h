@@ -25,6 +25,6 @@ public:
 private:
 ///Variables
 	// Movement in degrees that the turret can rotate per second
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float MaxDegreesPerSecond = 25.0f;
 };
