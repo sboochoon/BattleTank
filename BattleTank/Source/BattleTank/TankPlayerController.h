@@ -7,7 +7,7 @@
 #include "TankPlayerController.generated.h"
 
 ///Forward Declarations
-class ATank;
+class UTankAimingComponent;
 
 /**
 *
@@ -28,9 +28,9 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Returns the <ATank>GetPawn() of PlayerController
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-	ATank* GetControlledTank() const;
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
 
 ///Variables
 	// X Location of the crosshair UI on the screen

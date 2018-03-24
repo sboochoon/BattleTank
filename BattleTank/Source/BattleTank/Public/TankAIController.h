@@ -7,7 +7,6 @@
 #include "TankAIController.generated.h"
 
 ///Forward Declarations
-class ATank;
 
 /**
 *
@@ -29,11 +28,6 @@ private:
 	virtual void Tick(float DeltaTime) override;
 
 ///Variables
-	// AI controlled tank
-	ATank* ControlledTank = nullptr;
-
-	// Player controlled tank
-	ATank* PlayerTank = nullptr;
 
 	//How close can the AI tank get to the player
 	float AcceptanceRadius = 3000;

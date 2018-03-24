@@ -2,8 +2,8 @@
 
 
 #include "TankPlayerController.h"
-#include "Tank.h"
 #include "BattleTank.h"
+#include "TankAimingComponent.h"
 #include "Engine/World.h"
 
 #define OUT //written in the place where the variable is updated
@@ -14,6 +14,9 @@ Called when the game starts or when spawned
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
+	FoundAimingComponent(AimingComponent);
 }
 
 /* Tick
@@ -27,13 +30,6 @@ void ATankPlayerController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 }
 
-/* GetControlledTank
-Returns the <ATank>GetPawn() of PlayerController
-*/
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
 
 /* AimTowardsCrosshair
 TICK: Called every tick via TankPlayerController/Tick
@@ -41,7 +37,8 @@ Start moving the barrel toward the crosshair UI in the world
 */
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!GetControlledTank()) { return; }
+	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(AimingComponent)) { return; }
 
 	FVector OutHitLocation; //Out parameter to store our worldspace coords of where we're aiming at
 
@@ -49,7 +46,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 	if (GetSightRayHitLocation(OUT OutHitLocation))
 	{
 		//Tell our tank to move the turret and barrel to OutHitLocation
-		GetControlledTank()->AimAt(OutHitLocation);
+		AimingComponent->AimAt(OutHitLocation);
 	}
 }
 

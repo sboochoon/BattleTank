@@ -18,7 +18,7 @@ Forward/backward movement
 */
 void UTankMovementComponent::IntendMoveFoward(float Throw) 
 {
-	if (!LeftTrack || !RightTrack) { return; }
+	if (!ensure(LeftTrack && RightTrack)) { return; }
 
 	//Move the tank tracks based on how fast we want to go (-1 to +1)
 	LeftTrack->SetThrottle(Throw);
@@ -30,7 +30,7 @@ Right/left turning
 */
 void UTankMovementComponent::IntendTurnRight(float Turn)
 {
-	if (!LeftTrack || !RightTrack) { return; }
+	if (!ensure(LeftTrack && RightTrack)) { return; }
 
 	//Turn the tank tracks based on how fast we want to go (-1 to +1)
 	LeftTrack->SetThrottle(Turn);

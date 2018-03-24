@@ -19,6 +19,7 @@ enum class EFiringStatus : uint8
 ///Forward Declarations
 class UTankBarrel;
 class UTankTurret;
+class AProjectile;
 
 /**
 *
@@ -41,13 +42,31 @@ public:
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 
+	// Fire function
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	void Fire();
+
+///Variables
+
+	//Speed of the projectile being fired, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	float LaunchSpeed = 4000.0f; // 40 m/s
+
+	// Property to determine fire rate, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+		float ReloadTimeInSeconds = 3.0f;
+
+	// Allows user to add an AProjectile actor in BP, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
+
 ///TICK Functions
 	//TICK: TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt
 	//Get the AimLocation and LaunchSpeed from Tank.cpp, 
 	//Calculate if we can fire at our crosshair worldspace location based on SuggestProjectileVelocity,
 	//If we can then send a unit direction vector based on our AimLocation to our MoveBarrelTowards function.
 	//If we can not fire based on SuggestProjectileVelocity then it means that it is impossible for our projectile to reach the crosshair worldspace coords
-	void AimAt(FVector AimLocation, float LaunchSpeed);
+	void AimAt(FVector AimLocation);
 
 	//Enum for firing states
 	UPROPERTY(BlueprintReadOnly , Category = "Firing")
@@ -66,4 +85,7 @@ private:
 
 	// Turret for this tank that the aiming component is attached to
 	UTankTurret* Turret = nullptr;
+
+	// Var to hold time since last fired (used to calculate reloading)
+	double LastFireTime = 0; // *double* because we're using FPlatformTime::Seconds()	
 };

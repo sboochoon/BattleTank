@@ -3,6 +3,8 @@
 #include "TankAimingComponent.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
+#include "Projectile.h"
+#include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/GameplayStaticsTypes.h"
 
@@ -31,9 +33,9 @@ Calculate if we can fire at our crosshair worldspace location based on SuggestPr
 If we can then send a unit direction vector based on our AimLocation to our MoveBarrelTowards function
 If we can not fire based on SuggestProjectileVelocity then it means that it is impossible for our projectile to reach the crosshair worldspace coords
 */
-void UTankAimingComponent::AimAt(FVector AimLocation, float LaunchSpeed)
+void UTankAimingComponent::AimAt(FVector AimLocation)
 {
-	if (!Barrel || !Turret) { return; }
+	if (!ensure(Barrel && Turret)) { return; }
 
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("LaunchPoint"));
@@ -53,7 +55,7 @@ Send the appropriate rotation values to the Turret and Barrel
 */
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
-	if (!Barrel || !Turret) { return; }
+	if (!ensure(Barrel && Turret)) { return; }
 
 	//Find difference between current barrel rotation and AimDirection
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
@@ -65,4 +67,27 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 	//Tell the Turret to Rotate by the specified Yaw
 	Turret->Rotate(RotationAmount.Yaw);
+}
+
+/* Fire
+Tells the tank to fire a projectile if allowed based on reload time
+*/
+void UTankAimingComponent::Fire()
+{
+	if (!ensure(Barrel && ProjectileBlueprint)) { return; }
+	//True if ReloadTimeInSeconds has elapsed since LastFireTime, False if not
+	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+
+	//Tank can fire
+	if (isReloaded)
+	{
+		//Spawn <AProjectile> at "LaunchPoint" with socket's location and rotation
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("LaunchPoint")), Barrel->GetSocketRotation(FName("LaunchPoint")));
+
+		//Launch the spawned projectile
+		Projectile->LaunchProjectile(LaunchSpeed);
+
+		//Update LastFireTime to current because we've just fired
+		LastFireTime = FPlatformTime::Seconds();
+	}
 }
