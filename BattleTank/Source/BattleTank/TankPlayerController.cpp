@@ -37,6 +37,8 @@ Start moving the barrel toward the crosshair UI in the world
 */
 void ATankPlayerController::AimTowardsCrosshair()
 {
+	if (!GetPawn()) { return; } //If not possessing pawn
+
 	auto AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (!ensure(AimingComponent)) { return; }
 
@@ -67,9 +69,9 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	if (GetLookDirection(ScreenLocation, OUT OutLookDirection))
 	{
 		//...Use those crosshair coords to do a raycast and update OutHitLocation if we hit a valid location, or not
-		GetLookVectorHitLocation(OUT OutHitLocation, OutLookDirection);
+		return GetLookVectorHitLocation(OUT OutHitLocation, OutLookDirection);
 	}
-	return true;
+	return false;
 }
 
 /* GetLookDirection

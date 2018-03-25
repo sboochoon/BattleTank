@@ -26,6 +26,39 @@ void UTankAimingComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* Tur
 	Turret = TurretToSet;
 }
 
+void UTankAimingComponent::BeginPlay()
+{
+	LastFireTime = FPlatformTime::Seconds();
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime,TickType,ThisTickFunction);
+
+	//True if ReloadTimeInSeconds has elapsed since LastFireTime, False if not
+	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
+	{
+		FiringState = EFiringStatus::Reloading;
+	}
+	else if (IsBarrelMoving())
+	{
+		FiringState = EFiringStatus::Aiming;
+	}
+	else
+	{
+		FiringState = EFiringStatus::Locked;
+	}
+}
+
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Barrel)) { return false; }
+
+	auto BarrelForward = Barrel->GetForwardVector();
+
+	return !BarrelForward.Equals(AimDirection, 0.1f);
+}
+
 /* AimAt
 TICK: Called every tick via TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt
 Get the AimLocation and LaunchSpeed from Tank.cpp
@@ -35,6 +68,8 @@ If we can not fire based on SuggestProjectileVelocity then it means that it is i
 */
 void UTankAimingComponent::AimAt(FVector AimLocation)
 {
+	AimDirection = AimLocation;
+
 	if (!ensure(Barrel && Turret)) { return; }
 
 	FVector OutLaunchVelocity;
@@ -66,7 +101,15 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	Barrel->Elevate(RotationAmount.Pitch);
 
 	//Tell the Turret to Rotate by the specified Yaw
-	Turret->Rotate(RotationAmount.Yaw);
+	if (FMath::Abs(RotationAmount.Yaw) < 180)
+	{
+		Turret->Rotate(RotationAmount.Yaw);
+	}
+	
+	else
+	{
+		Turret->Rotate(-RotationAmount.Yaw);
+	}
 }
 
 /* Fire
@@ -74,13 +117,9 @@ Tells the tank to fire a projectile if allowed based on reload time
 */
 void UTankAimingComponent::Fire()
 {
-	if (!ensure(Barrel && ProjectileBlueprint)) { return; }
-	//True if ReloadTimeInSeconds has elapsed since LastFireTime, False if not
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-
-	//Tank can fire
-	if (isReloaded)
+	if (FiringState != EFiringStatus::Reloading)
 	{
+		if (!ensure(Barrel && ProjectileBlueprint)) { return; }
 		//Spawn <AProjectile> at "LaunchPoint" with socket's location and rotation
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, Barrel->GetSocketLocation(FName("LaunchPoint")), Barrel->GetSocketRotation(FName("LaunchPoint")));
 

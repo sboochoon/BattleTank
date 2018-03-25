@@ -79,6 +79,14 @@ private:
 	//Send the appropriate rotation values to the Turret and Barrel
 	void MoveBarrelTowards(FVector AimDirection);
 
+	bool IsBarrelMoving();
+
+	//BeginPlay of UActorComponent
+	virtual void BeginPlay() override;
+
+	//TickComponent of UActorComponent
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+
 ///Variables
 	// Barrel for this tank that the aiming component is attached to
 	UTankBarrel* Barrel = nullptr;
@@ -88,4 +96,6 @@ private:
 
 	// Var to hold time since last fired (used to calculate reloading)
 	double LastFireTime = 0; // *double* because we're using FPlatformTime::Seconds()	
+
+	FVector AimDirection;
 };
