@@ -35,8 +35,12 @@ void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime,TickType,ThisTickFunction);
 
+	if (AmmoCount <= 0)
+	{
+		FiringState = EFiringStatus::OutOfAmmo;
+	}
 	//True if ReloadTimeInSeconds has elapsed since LastFireTime, False if not
-	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
+	else if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
 	{
 		FiringState = EFiringStatus::Reloading;
 	}
@@ -56,7 +60,7 @@ bool UTankAimingComponent::IsBarrelMoving()
 
 	auto BarrelForward = Barrel->GetForwardVector();
 
-	return !BarrelForward.Equals(AimDirection, 0.1f);
+	return !BarrelForward.Equals(AimDirection, 0.01);
 }
 
 /* AimAt
@@ -68,9 +72,9 @@ If we can not fire based on SuggestProjectileVelocity then it means that it is i
 */
 void UTankAimingComponent::AimAt(FVector AimLocation)
 {
-	AimDirection = AimLocation;
+	//AimDirection = AimLocation;
 
-	if (!ensure(Barrel && Turret)) { return; }
+	if (!ensure(Barrel)) { return; }
 
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("LaunchPoint"));
@@ -79,7 +83,7 @@ void UTankAimingComponent::AimAt(FVector AimLocation)
 
 	if (bHaveAimSolution)
 	{
-		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrelTowards(AimDirection);
 	}
 }
@@ -90,7 +94,7 @@ Send the appropriate rotation values to the Turret and Barrel
 */
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
-	if (!ensure(Barrel && Turret)) { return; }
+	if (!ensure(Barrel)) { return; }
 
 	//Find difference between current barrel rotation and AimDirection
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
@@ -117,7 +121,7 @@ Tells the tank to fire a projectile if allowed based on reload time
 */
 void UTankAimingComponent::Fire()
 {
-	if (FiringState != EFiringStatus::Reloading)
+	if (FiringState != EFiringStatus::Reloading && FiringState != EFiringStatus::OutOfAmmo)
 	{
 		if (!ensure(Barrel && ProjectileBlueprint)) { return; }
 		//Spawn <AProjectile> at "LaunchPoint" with socket's location and rotation
@@ -128,5 +132,23 @@ void UTankAimingComponent::Fire()
 
 		//Update LastFireTime to current because we've just fired
 		LastFireTime = FPlatformTime::Seconds();
+
+		//Reduce Ammo
+		AmmoCount--;
 	}
+}
+
+int UTankAimingComponent::GetAmmo() const
+{
+	return AmmoCount;
+}
+
+void UTankAimingComponent::SetAmmo(int amount)
+{
+	AmmoCount = amount;
+}
+
+EFiringStatus UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
 }
