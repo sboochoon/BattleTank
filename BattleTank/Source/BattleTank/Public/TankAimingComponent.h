@@ -69,10 +69,13 @@ public:
 	// Allows user to add an AProjectile actor in BP, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
+<<<<<<< HEAD
 
 	//Ammo for tank
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	int32 AmmoCount = 15;
+=======
+>>>>>>> a19e2e319599715a579b2e8d96a3b5b4494620d4
 
 ///TICK Functions
 	//TICK: TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt
@@ -113,5 +116,10 @@ private:
 
 	FVector AimDirection;
 
+<<<<<<< HEAD
 
+=======
+	//Ammo for tank
+	int AmmoCount = 15;
+>>>>>>> a19e2e319599715a579b2e8d96a3b5b4494620d4
 };
