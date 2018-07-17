@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 #include "Projectile.generated.h"
 
 /**
@@ -35,7 +36,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
 ///Variables
 	// Variable type for projectile movement: https://docs.unrealengine.com/latest/INT/API/Runtime/Engine/GameFramework/UProjectileMovementComponent/
 	UProjectileMovementComponent* ProjectileMovementComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UStaticMeshComponent* CollisionMesh = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UParticleSystemComponent* LaunchBlast = nullptr;
 };

@@ -13,7 +13,8 @@ enum class EFiringStatus : uint8
 {
 	Reloading,
 	Aiming,
-	Locked
+	Locked,
+	OutOfAmmo
 };
 
 ///Forward Declarations
@@ -46,6 +47,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	void Fire();
 
+	// Get Ammo
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	int GetAmmo() const;
+
+	// Set Ammo
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void SetAmmo(int amount);
+
+	EFiringStatus GetFiringState() const;
 ///Variables
 
 	//Speed of the projectile being fired, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
@@ -54,11 +64,15 @@ public:
 
 	// Property to determine fire rate, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-		float ReloadTimeInSeconds = 3.0f;
+	float ReloadTimeInSeconds = 3.0f;
 
 	// Allows user to add an AProjectile actor in BP, can only be edited in main BP class, not an instance of it (EditDefaultsOnly)
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-		TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
+	TSubclassOf<AProjectile> ProjectileBlueprint; // TSubclassOf<Class> is an alternative to UClass*, however it limits what can be added to only the <Class> specified
+
+	//Ammo for tank
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	int32 AmmoCount = 15;
 
 ///TICK Functions
 	//TICK: TankPlayerController/Tick/AimTowardsCrosshair/Tank/AimAt
@@ -98,4 +112,6 @@ private:
 	double LastFireTime = 0; // *double* because we're using FPlatformTime::Seconds()	
 
 	FVector AimDirection;
+
+
 };
